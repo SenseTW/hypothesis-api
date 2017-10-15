@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "tsc",
-    "test": "mocha --reporter spec --compilers ts:ts-node/register 'src/**/*.test.ts'"
+    "test": "mocha --reporter spec --require ts-node/register 'src/**/*.test.ts'"
   },
   "author": "caasi Huang",
   "license": "CC0-1.0",
@@ -19,5 +19,9 @@
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",
     "typescript": "^2.5.3"
+  },
+  "dependencies": {
+    "@types/node": "^8.0.34",
+    "axios": "^0.16.2"
   }
 }
