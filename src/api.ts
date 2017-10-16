@@ -60,6 +60,16 @@ export namespace API {
     userid: null,
   }
 
+  // TODO:
+  //   type Selector
+  //     = FragmentSelector
+  //     | CSSSelector
+  //     | XPathSelector
+  //     | TextQuoteSelector
+  //     | TextPositionSelector
+  //     | DataPositionSelector
+  //     | SVGSelector
+  //     | RangeSelector
   export type Selector = {
     type: string
   }
@@ -80,11 +90,11 @@ export namespace API {
       update: string[],
       delete: string[]
     },
-    references: string[],
+    references?: string[],
     tags: string[],
     target: {
       source: string,
-      selector: Selector
+      selector: Selector[]
     }[],
     links: {
       json: string,
@@ -93,6 +103,6 @@ export namespace API {
     },
     text: string,
     uri: string,
-    id: number
+    id: string
   }
 }
