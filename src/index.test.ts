@@ -18,12 +18,12 @@ after(() => {
 
 /**
  * Test if the given object is a Link.
- * 
+ *
  * If we use flowtype, we can use `babel-plugin-flow-runtime` to keep type
  * informations for jest.
  * We can install `ts-runtime` but I think it's better to have a register of
  * `ts-runtime` for mocha. So we don't have to write this.
- * 
+ *
  * @param {API.Link} obj - The object to test.
  */
 const expectToBeALink = (obj: API.Link) => {
@@ -35,7 +35,7 @@ const expectToBeALink = (obj: API.Link) => {
 
 /**
  * Test if the given object is a Group.
- * 
+ *
  * @param {API.Group} obj - The object to test.
  */
 const expectToBeAGroup = (obj: API.Group) => {
@@ -47,7 +47,7 @@ const expectToBeAGroup = (obj: API.Group) => {
 
 /**
  * Test if the given object is a Selector.
- * 
+ *
  * @param {API.Selector} obj - The object to test.
  */
 const expectToBeASelector = (obj: API.Selector) => {
@@ -57,7 +57,7 @@ const expectToBeASelector = (obj: API.Selector) => {
 
 /**
  * Test if the given object is an array or map of some type.
- * 
+ *
  * @param {any} obj - The array or object to test.
  */
 const expectToBeAnContainerOf = (obj: any, ty: string) => {
@@ -65,6 +65,59 @@ const expectToBeAnContainerOf = (obj: any, ty: string) => {
   for (let k in obj) {
     expect(obj[k]).to.be.a(ty)
   }
+}
+
+/**
+ * Test if the given object is an annotation.
+ *
+ * @param {API.Annotation} obj - The object to test.
+ */
+const expectToBeAnAnnotation = (obj: API.Annotation) => {
+  expect(obj).to.have.all.keys(
+    'created',
+    'updated',
+    'group',
+    'flagged',
+    'user',
+    'hidden',
+    'document',
+    'permissions',
+    'tags',
+    'target',
+    'links',
+    'text',
+    'uri',
+    'id'
+  )
+  expect(obj.created).to.be.a('string')
+  expect(obj.updated).to.be.a('string')
+  expect(obj.group).to.be.a('string')
+  expect(obj.flagged).to.be.a('boolean')
+  expect(obj.user).to.be.a('string')
+  expect(obj.hidden).to.be.a('boolean')
+  if (obj.document.title) {
+    expectToBeAnContainerOf(obj.document.title, 'string')
+  }
+  expectToBeAnContainerOf(obj.permissions.read, 'string')
+  expectToBeAnContainerOf(obj.permissions.admin, 'string')
+  expectToBeAnContainerOf(obj.permissions.update, 'string')
+  expectToBeAnContainerOf(obj.permissions.delete, 'string')
+  if (obj.references) {
+    expectToBeAnContainerOf(obj.references, 'string')
+  }
+  expectToBeAnContainerOf(obj.tags, 'string')
+  for (let k in obj.target) {
+    expect(obj.target[k].source).to.be.a('string')
+    for (let j in obj.target[k].selector) {
+      expectToBeASelector(obj.target[k].selector[j])
+    }
+  }
+  expect(obj.links.json).to.be.a('string')
+  expect(obj.links.html).to.be.a('string')
+  expect(obj.links.incontext).to.be.a('string')
+  expect(obj.text).to.be.a('string')
+  expect(obj.uri).to.be.a('string')
+  expect(obj.id).to.be.a('string')
 }
 
 describe('Hypothesis API', () => {
@@ -106,54 +159,29 @@ describe('Hypothesis API', () => {
       expectToBeAGroup(profile.groups[k])
     }
     expectToBeAnContainerOf(profile.preferences, 'boolean')
-    expect(profile.userid).to.be.null
+    if (profile.userid !== null) {
+      expect(profile.userid).to.be.a('string')
+    }
   })
 
   it('should read an annotation', async () => {
     const annotation: API.Annotation = await h.annotation('c5AeVv0pEeaWu_f_2ojWhw')
 
-    expect(annotation).to.have.all.keys(
-      'created',
-      'updated',
-      'group',
-      'flagged',
-      'user',
-      'hidden',
-      'document',
-      'permissions',
-      'tags',
-      'target',
-      'links',
-      'text',
-      'uri',
-      'id'
-    )
-    expect(annotation.created).to.be.a('string')
-    expect(annotation.updated).to.be.a('string')
-    expect(annotation.group).to.be.a('string')
-    expect(annotation.flagged).to.be.a('boolean')
-    expect(annotation.user).to.be.a('string')
-    expect(annotation.hidden).to.be.a('boolean')
-    expectToBeAnContainerOf(annotation.document.title, 'string')
-    expectToBeAnContainerOf(annotation.permissions.read, 'string')
-    expectToBeAnContainerOf(annotation.permissions.admin, 'string')
-    expectToBeAnContainerOf(annotation.permissions.update, 'string')
-    expectToBeAnContainerOf(annotation.permissions.delete, 'string')
-    if (annotation.references) {
-      expectToBeAnContainerOf(annotation.references, 'string')
+    expectToBeAnAnnotation(annotation)
+  })
+
+  it('should search annotations', async () => {
+    const searchResult: API.SearchResult<API.Annotation> = await h.search({ any: 'hypothesis' })
+
+    expect(searchResult.total).to.be.a('number')
+    for (let ann of searchResult.rows) {
+      expectToBeAnAnnotation(ann)
     }
-    expectToBeAnContainerOf(annotation.tags, 'string')
-    for (let k in annotation.target) {
-      expect(annotation.target[k].source).to.be.a('string')
-      for (let j in annotation.target[k].selector) {
-        expectToBeASelector(annotation.target[k].selector[j])
-      }
-    }
-    expect(annotation.links.json).to.be.a('string')
-    expect(annotation.links.html).to.be.a('string')
-    expect(annotation.links.incontext).to.be.a('string')
-    expect(annotation.text).to.be.a('string')
-    expect(annotation.uri).to.be.a('string')
-    expect(annotation.id).to.be.a('string')
+  })
+
+  it('should fetch links', async () => {
+    const links: API.OtherLinks = await h.links()
+
+    expectToBeAnContainerOf(links, 'string')
   })
 })

@@ -7,6 +7,17 @@ export namespace API {
     desc: string
   }
 
+  export type OtherLinks = {
+    'account.settings'?: string,
+    'forget-password'?: string,
+    'groups.new'?: string,
+    help?: string,
+    'oauth.revoke'?: string,
+    'search.tag'?: string,
+    signup?: string,
+    user?: string
+  }
+
   export type Resources = {
     message: string,
     links: {
@@ -57,7 +68,7 @@ export namespace API {
     preferences: {
       [key: string]: boolean
     },
-    userid: null,
+    userid: string | null,
   }
 
   // TODO:
@@ -82,7 +93,7 @@ export namespace API {
     user: string,
     hidden: boolean,
     document: {
-      title: string[]
+      title?: string[]
     },
     permissions: {
       read: string[],
@@ -104,5 +115,23 @@ export namespace API {
     text: string,
     uri: string,
     id: string
+  }
+
+  export interface SearchOption {
+    limit?: number, // 20
+    offset?: number, // 0
+    sort?: string, // 'updated'
+    order?: 'desc' | 'asc', // 'desc'
+    uri?: string,
+    url?: string,
+    user?: string,
+    group?: string,
+    tag?: string,
+    any?: string
+  }
+
+  export type SearchResult<T> = {
+    rows: T[],
+    total: number
   }
 }

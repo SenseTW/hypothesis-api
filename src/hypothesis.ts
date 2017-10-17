@@ -21,10 +21,18 @@ export class Hypothesis {
   }
 
   profile(): Promise<API.Profile> {
-    return axios.get(`${this.apiUrl}/profile`).then(r => r.data)
+    return axios.get(`${this.apiUrl}/profile`, this.defaultConfig).then(r => r.data)
   }
 
   annotation(id: string): Promise<API.Annotation> {
-    return axios.get(`${this.apiUrl}/annotations/${id}`).then(r => r.data)
+    return axios.get(`${this.apiUrl}/annotations/${id}`, this.defaultConfig).then(r => r.data)
+  }
+
+  search(option: API.SearchOption): Promise<API.SearchResult<API.Annotation>> {
+    return axios.get(`${this.apiUrl}/search`, { ...this.defaultConfig, params: option }).then(r => r.data)
+  }
+
+  links(): Promise<API.OtherLinks> {
+    return axios.get(`${this.apiUrl}/links`, this.defaultConfig).then(r => r.data)
   }
 }
