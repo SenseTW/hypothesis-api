@@ -1,13 +1,13 @@
 export namespace API {
   export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD'
 
-  export type Link = {
+  export interface Link {
     url: string,
     method: Method,
     desc: string
   }
 
-  export type OtherLinks = {
+  export interface OtherLinks {
     'account.settings'?: string,
     'forget-password'?: string,
     'groups.new'?: string,
@@ -18,7 +18,7 @@ export namespace API {
     user?: string
   }
 
-  export type Resources = {
+  export interface Resources {
     message: string,
     links: {
       profile: {
@@ -44,13 +44,13 @@ export namespace API {
     }
   }
 
-  export type Group = {
+  export interface Group {
     id: string,
     name: string,
     public: boolean
   }
 
-  export type Profile = {
+  export interface Profile {
     authority: string,
     features: {
       defer_realtime_updates: boolean,
@@ -81,20 +81,12 @@ export namespace API {
   //     | DataPositionSelector
   //     | SVGSelector
   //     | RangeSelector
-  export type Selector = {
+  export interface Selector {
     type: string
   }
 
-  export type Annotation = {
-    created: string,
-    updated: string,
+  export interface AnnotationOption {
     group: string,
-    flagged: boolean,
-    user: string,
-    hidden: boolean,
-    document: {
-      title?: string[]
-    },
     permissions: {
       read: string[],
       admin: string[],
@@ -107,14 +99,25 @@ export namespace API {
       source: string,
       selector: Selector[]
     }[],
+    text: string,
+    uri: string
+  }
+
+  export interface Annotation extends AnnotationOption {
+    id: string,
+    created: string,
+    updated: string,
+    flagged: boolean,
+    user: string,
+    hidden: boolean,
+    document: {
+      title?: string[]
+    },
     links: {
       json: string,
       html: string,
       incontext: string
-    },
-    text: string,
-    uri: string,
-    id: string
+    }
   }
 
   export interface SearchOption {
@@ -130,7 +133,7 @@ export namespace API {
     any?: string
   }
 
-  export type SearchResult<T> = {
+  export interface SearchResult<T> {
     rows: T[],
     total: number
   }
