@@ -35,4 +35,16 @@ export class Hypothesis {
   links(): Promise<API.OtherLinks> {
     return axios.get(`${this.apiUrl}/links`, this.defaultConfig).then(r => r.data)
   }
+
+  createUser(option: API.CreateUserOption): Promise<API.CreateUserResult> {
+    return axios.post(`${this.apiUrl}/users`,option).then(r => r.data)
+  }
+
+  updateUser(userName: string, option: API.UpdateUserOption): Promise<API.UpdateUserResult> {
+    return axios.patch(`${this.apiUrl}/${userName}`, option).then(r => r.data)
+  }
+
+  removeMember(option: API.RemoveMemberOption): Promise<API.RemoveMemberResult> {
+    return axios.delete(`${this.apiUrl}/groups/${option.id}/members/${option.user}`).then(r => r.data)
+  }
 }

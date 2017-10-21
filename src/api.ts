@@ -191,4 +191,38 @@ export namespace API {
     rows: T[];
     total: number;
   }
+
+  export interface CreateUserOption {
+    authority: string,
+    username: string, // 3~30  ^[A-Za-z0-9._]+$
+    email: string,
+    display_name: string // <= 30
+  }
+
+  export interface CreateUserResult extends CreateUserOption {
+    userid: string
+  }
+
+  export interface UpdateUserOption {
+    email: string,
+    display_name: string // <= 30
+  }
+
+  export interface UpdateUserResult {
+    authority: string,
+    username: string,
+    email: string,
+    display_name: string,
+    userid: string
+  }
+
+  export interface RemoveMemberOption {
+    id: string,
+    user: string
+  }
+
+  export interface RemoveMemberResult {
+    status: string,
+    reason: string
+  }
 }
