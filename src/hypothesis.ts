@@ -4,7 +4,7 @@ import { API } from './api'
 export class Hypothesis {
   private apiUrl: string
   private defaultConfig: AxiosRequestConfig
-
+  
   constructor(apiUrl, token = process.env.HYPOTHESIS_TOKEN) {
     if (!token) throw new Error('API token is missing!')
 

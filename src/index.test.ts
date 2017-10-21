@@ -4,6 +4,7 @@ import { API } from './api'
 import { Hypothesis } from './index'
 
 const expect = chai.expect
+const TIME_OUT = 5000
 
 let h
 
@@ -60,7 +61,7 @@ const expectToBeASelector = (obj: API.Selector) => {
  *
  * @param {any} obj - The array or object to test.
  */
-const expectToBeAnContainerOf = (obj: any, ty: string) => {
+const expectToBeAnContainerOf = (obj: any, ty: string) => {  
   expect(obj).to.be.exist
   for (let k in obj) {
     expect(obj[k]).to.be.a(ty)
@@ -73,7 +74,7 @@ const expectToBeAnContainerOf = (obj: any, ty: string) => {
  * @param {API.Annotation} obj - The object to test.
  */
 const expectToBeAnAnnotation = (obj: API.Annotation) => {
-  expect(obj).to.have.all.keys(
+  expect(obj).to.contain.keys(
     'created',
     'updated',
     'group',
@@ -147,7 +148,7 @@ describe('Hypothesis API', () => {
     expectToBeALink(resources.links.annotation.flag)
     expectToBeALink(resources.links.annotation.delete)
     expectToBeALink(resources.links.links)
-  })
+  }).timeout(TIME_OUT)
 
   it('should read the user profile', async () => {
     const profile: API.Profile = await h.profile()
@@ -183,5 +184,5 @@ describe('Hypothesis API', () => {
     const links: API.OtherLinks = await h.links()
 
     expectToBeAnContainerOf(links, 'string')
-  })
+  }).timeout(TIME_OUT)
 })
